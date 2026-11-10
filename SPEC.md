@@ -67,10 +67,10 @@
 | Not now | Eligibility screening and application submission | n/a | n/a |
 
 ### 6. Agent and skills
-- **Agent name and voice:** TODO (update `shared/project.config.js` to match)
-- **Starter skills we keep:** TODO
-- **New skills we'll write:** TODO (name, what it does, when it should be used)
-- **The agent must NEVER:** TODO
+- **Agent name and voice:** Benefits Letter Decoder — calm, respectful, clear, and easy to understand. Uses 6th-grade reading level.
+- **Starter skills we keep:** plain-language-explainer, action-plan-builder, safety-guardrail.
+- **New skills we'll write:** None confirmed yet. We will evaluate whether a notice-specific skill is needed.
+- **The agent must NEVER:** Invent deadlines or required actions, determine benefits eligibility, provide legal advice, or claim information is correct when the letter is unclear.
 
 ### 7. Data
 | Table | What's in it | Where the data comes from | Who keeps it up to date |
