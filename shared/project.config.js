@@ -17,8 +17,7 @@ export const project = {
 
   // One specific person. Give them a name, an age, and a situation.
   targetUser:
-    'TODO: Create a fictional persona representing an adult age 65+ on a fixed income who receives Medicaid or SNAP notices.',
-
+    'Helen, 72, receives Medicaid and SNAP benefits. She struggles to understand renewal notices, deadlines and required actions. She sometimes asks a family member for help.',
   community: 'TODO: Confirm the state with the team',
   theme: 'Access to Essential Services / Senior Advocacy',
 
