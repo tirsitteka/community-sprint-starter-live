@@ -41,22 +41,21 @@
 ### 2. Problem
 - **Problem statement:** Older adults often receive complicated Medicaid and SNAP letters that are difficult to understand. They may miss important deadlines or fail to take required actions, putting their benefits at risk.
 - **Theme:** Access to Essential Services / Senior Advocacy
-- **Evidence it's real:** Government benefits notices contain complex language and instructions. Our team identified this as a problem affecting older adults. We will add a supporting s### 3. User
-- **Main user:** Adults 65+ on fixed incomes who receive Medicaid or SNAP notices by mail or online and have limited internet skills, plus family members who help them.
-- **What they do today without our app:** Try to understand complicated notices and instructions, sometimes missing important steps or deadlines.
-- **Device and language(s):** To be confirmed with the team.ource or firsthand account.
+- **Evidence it's real:** Government benefits notices contain complex language and instructions. Our team identified this as a problem affecting older adults. We will add a supporting source or firsthand account.
 
+  
 ### 3. User
-- **Main user:** TODO (name, age, situation)
-- **What they do today without our app:** TODO
-- **Device and language(s):** TODO
+- **Main user:** Adults age 65 and older on fixed incomes in Silver Spring, Maryland who receive Medicaid or SNAP notices and may have limited digital skills. Family members or caregivers may also help them.
+- **What they do today without our app:** Try to understand complicated letters themselves, ask family members for help or contact government agencies for clarification.
+- **Device and language(s):** Smartphone or computer. English for the initial MVP.
 
 ### 4. Goals
 | Goal | How we'll measure it | Target |
 |---|---|---|
-| Users understand the deadline and required action | Test with 8-10 users | At least 80% answer correctly |
-| The app accurately identifies key information | Test 15 sample notices against an answer key | At least 90% accuracy for deadline and action; original text always visible |
-| Users know who to contact and when | Ask 10 test users to identify the next step without help | At least 8 out of 10 succeed |
+| Users understand the deadline and required action | Test with 2 fictional notices (Medicaid and SNAP) | Correct deadline and required action for both notices |
+| The app accurately identifies key information | Compare results with answer keys for 2 sample notices | 100% accuracy on both notices; original text remains visible |
+| Users know who to contact and what to do next | Review the next steps and contact information in both results | Clear instructions without invented contact details |
+| The app handles unclear information safely | Test a notice with missing or unclear information | Warn the user instead of guessing |
 
 ### 5. Features
 | Priority | Feature | Ticket | Skill(s) |
