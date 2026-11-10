@@ -43,9 +43,8 @@
 - **Theme:** Access to Essential Services / Senior Advocacy
 - **Evidence it's real:** Government benefits notices contain complex language and instructions. Our team identified this as a problem affecting older adults. We will add a supporting source or firsthand account.
 
-  
 ### 3. User
-- **Main user:** Adults age 65 and older on fixed incomes in Silver Spring, Maryland who receive Medicaid or SNAP notices and may have limited digital skills. Family members or caregivers may also help them.
+- **Main user:** Adults age 65 and older who receive Medicaid or SNAP notices and may have difficulty understanding complicated instructions or using technology. Family members and caregivers may also help them.
 - **What they do today without our app:** Try to understand complicated letters themselves, ask family members for help or contact government agencies for clarification.
 - **Device and language(s):** Smartphone or computer. English for the initial MVP.
 
@@ -60,9 +59,9 @@
 ### 5. Features
 | Priority | Feature | Ticket | Skill(s) |
 |---|---|---|---|
-| Must | Upload a photo or paste notice text | 004 | TODO: Confirm agent skill |
-| Must | Explain the notice, deadline, required action and who to call | 005 | TODO: Confirm agent skill |
-| Must | Display original wording alongside summary and show uncertainty warnings | 006 | TODO: Confirm agent skill |
+| Must | Upload a photo or paste notice text | Not created | To be confirmed |
+| Must | Explain the notice, deadline, required action and who to contact | Not created | To be confirmed |
+| Must | Display original wording alongside summary and show uncertainty warnings | Not created | To be confirmed |
 | Not now | Eligibility screening and application submission | n/a | n/a |
 
 ### 6. Agent and skills
@@ -75,7 +74,7 @@
 | Table | What's in it | Where the data comes from | Who keeps it up to date |
 |---|---|---|---|
 | resources | Public agency phone numbers and website information | Official government agency websites | Team (manual updates) |
-| sample_notices | Fictional Medicaid renewal and SNAP recertification notices for testing | Public agency notice templates | Team (manual updates) |
+| sample_notices | Fictional Medicaid renewal and SNAP recertification notices for testing | Team-created fictional test documents | Team (manual updates) |
 
 ### 8. Privacy and governance
 - **Personal info our app could touch:** Names, addresses, case numbers, health information and benefits details contained in uploaded letters.
