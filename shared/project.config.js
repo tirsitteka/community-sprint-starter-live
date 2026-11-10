@@ -26,11 +26,15 @@ export const project = {
     'At least 90% accuracy on 15 sample notices and at least 80% of test users correctly identify the deadline and required action.',
 
   teamMembers: [
-    { name: 'TODO', role: 'Product owner (writes tickets)' },
-    { name: 'TODO', role: 'Front end (React)' },
-    { name: 'TODO', role: 'Back end (API + database)' },
-    { name: 'TODO', role: 'AI agent and skills' },
-  ],
+  {
+    name: 'Tirsit',
+    role: 'App building, frontend and API integration'
+  },
+  {
+    name: 'Christina',
+    role: 'AI prompts, sample notices, testing and research'
+  },
+],
 
   // The personality of your AI agent. Used in its system prompt.
   agent: {
