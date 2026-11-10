@@ -5,23 +5,26 @@
 // Anything still starting with "TODO" shows up highlighted on the page.
 // =============================================================
 
+
 export const project = {
-  teamName: 'TODO: Team Name',
-  appName: 'Community Compass',
-  tagline: 'Find help nearby, in plain language.',
+  teamName: 'AI Advocacy - Letter Decoder',
+  appName: 'Benefits Letter Decoder',
+  tagline: 'Understand your benefits letters and know what to do next.',
 
   // One or two sentences. Who is hurting, and how?
   problemStatement:
-    'TODO: Families in our neighborhood struggle to find free food, health, and youth programs because the information is scattered and hard to read.',
+    'Older adults often receive complicated Medicaid and SNAP letters that are difficult to understand. They may miss important deadlines or fail to take required actions, putting their benefits at risk.',
 
   // One specific person. Give them a name, an age, and a situation.
-  targetUser: 'TODO: Maria, 34, a parent of two who works evenings and searches on her phone.',
+  targetUser:
+    'TODO: Create a fictional persona representing an adult age 65+ on a fixed income who receives Medicaid or SNAP notices.',
 
-  community: 'TODO: Chicago, IL',
-  theme: 'TODO: Education Access / Global Health / Clean Water / Climate / Child Protection',
+  community: 'TODO: Confirm the state with the team',
+  theme: 'Access to Essential Services / Senior Advocacy',
 
   // How you will know it works. Make it measurable.
-  successMeasure: 'TODO: A parent can find a matching resource in under 2 minutes.',
+  successMeasure:
+    'At least 90% accuracy on 15 sample notices and at least 80% of test users correctly identify the deadline and required action.',
 
   teamMembers: [
     { name: 'TODO', role: 'Product owner (writes tickets)' },
@@ -32,11 +35,12 @@ export const project = {
 
   // The personality of your AI agent. Used in its system prompt.
   agent: {
-    name: 'Compass',
-    voice: 'warm, encouraging, and plain-spoken, like a helpful neighbor',
+    name: 'Benefits Letter Decoder',
+    voice: 'calm, respectful, clear, and easy to understand',
     readingLevel: '6th grade',
   },
 };
+  
 
 // True if a value still needs to be filled in.
 export const isTodo = (value) => typeof value === 'string' && value.trim().startsWith('TODO');
