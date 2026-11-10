@@ -34,14 +34,17 @@
 ## PART B: Our project (fill this in)
 
 ### 1. Team and one-liner
-- **Team name:** TODO
-- **App name:** TODO
-- **One sentence:** We help TODO (who) TODO (do what) so that TODO (result).
+- **Team name:** AI Advocacy - Letter Decoder
+- **App name:** Benefits Letter Decoder
+- **One sentence:** We help older adults understand complicated Medicaid and SNAP letters so they know what actions to take and when.
 
 ### 2. Problem
-- **Problem statement:** TODO
-- **Theme:** TODO (Climate, Education Access, Global Health, Clean Water, Child Protection, other)
-- **Evidence it's real:** TODO (a number, an article, or a conversation with someone affected)
+- **Problem statement:** Older adults often receive complicated Medicaid and SNAP letters that are difficult to understand. They may miss important deadlines or fail to take required actions, putting their benefits at risk.
+- **Theme:** Access to Essential Services / Senior Advocacy
+- **Evidence it's real:** Government benefits notices contain complex language and instructions. Our team identified this as a problem affecting older adults. We will add a supporting s### 3. User
+- **Main user:** Adults 65+ on fixed incomes who receive Medicaid or SNAP notices by mail or online and have limited internet skills, plus family members who help them.
+- **What they do today without our app:** Try to understand complicated notices and instructions, sometimes missing important steps or deadlines.
+- **Device and language(s):** To be confirmed with the team.ource or firsthand account.
 
 ### 3. User
 - **Main user:** TODO (name, age, situation)
@@ -51,15 +54,17 @@
 ### 4. Goals
 | Goal | How we'll measure it | Target |
 |---|---|---|
-| TODO | TODO | TODO |
+| Users understand the deadline and required action | Test with 8-10 users | At least 80% answer correctly |
+| The app accurately identifies key information | Test 15 sample notices against an answer key | At least 90% accuracy for deadline and action; original text always visible |
+| Users know who to contact and when | Ask 10 test users to identify the next step without help | At least 8 out of 10 succeed |
 
 ### 5. Features
 | Priority | Feature | Ticket | Skill(s) |
 |---|---|---|---|
-| Must | TODO | 004 | TODO |
-| Must | TODO | 005 | TODO |
-| Must | TODO | 006 | TODO |
-| Not now | TODO | n/a | n/a |
+| Must | Upload a photo or paste notice text | 004 | TODO: Confirm agent skill |
+| Must | Explain the notice, deadline, required action and who to call | 005 | TODO: Confirm agent skill |
+| Must | Display original wording alongside summary and show uncertainty warnings | 006 | TODO: Confirm agent skill |
+| Not now | Eligibility screening and application submission | n/a | n/a |
 
 ### 6. Agent and skills
 - **Agent name and voice:** TODO (update `shared/project.config.js` to match)
@@ -70,17 +75,25 @@
 ### 7. Data
 | Table | What's in it | Where the data comes from | Who keeps it up to date |
 |---|---|---|---|
-| resources | TODO | TODO | TODO |
-| TODO | TODO | TODO | TODO |
+| resources | Public agency phone numbers and website information | Official government agency websites | Team (manual updates) |
+| sample_notices | Fictional Medicaid renewal and SNAP recertification notices for testing | Public agency notice templates | Team (manual updates) |
 
 ### 8. Privacy and governance
-- **Personal info our app could touch:** TODO
-- **How we protect it:** TODO
-- **What we tell users up front:** TODO
-- **Who on the team is responsible:** TODO
+- **Personal info our app could touch:** Names, addresses, case numbers, health information and benefits details contained in uploaded letters.
+- **How we protect it:** Use fictional sample notices for development and testing. Do not save uploaded letters or personal information in our application database. Review API handling and logging before allowing real notices.
+- **What we tell users up front:** AI can make mistakes. Users should verify deadlines and required actions against the original notice and contact the agency when unsure. The app does not provide legal advice or determine benefits eligibility.
+- **Who on the team is responsible:** To be assigned by the team.
 
 ### 9. Out of scope (not in these two weeks)
-- TODO
+- Eligibility screening (Benefits Finder)
+- Filling out or submitting government applications
+- User accounts or saving uploaded letters
+- Supporting additional benefit programs or multiple states
+- Providing legal advice or connecting directly to government agency systems
 
 ### 10. Open questions
-- TODO
+- Which state will we use for the Medicaid and SNAP sample notices?
+- Who will be responsible for development, AI prompts, testing and research?
+- Which AI agent skills will we use or create?
+- How will we handle photo uploads and ensure sensitive information is not retained?
+- Who will be responsible for privacy and reviewing AI-generated explanations?
