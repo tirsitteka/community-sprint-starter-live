@@ -1,3 +1,4 @@
+
 # SPEC.md: Our Project Specification
 
 > Fill this in with your team **before** your first ticket.
@@ -41,7 +42,7 @@
 ### 2. Problem
 - **Problem statement:** Older adults often receive complicated Medicaid and SNAP letters that are difficult to understand. They may miss important deadlines or fail to take required actions, putting their benefits at risk.
 - **Theme:** Access to Essential Services / Senior Advocacy
-- **Evidence it's real:** Government benefits notices contain complex language and instructions. Our team identified this as a problem affecting older adults. We will add a supporting source or firsthand account.
+- **Evidence it's real:** Government benefits notices contain complex language and instructions. Our team identified this as a problem affecting older adults. Supporting evidence or a firsthand account is pending.
 
 ### 3. User
 - **Main user:** Adults age 65 and older who receive Medicaid or SNAP notices and may have difficulty understanding complicated instructions or using technology. Family members and caregivers may also help them.
@@ -74,23 +75,25 @@
 | Table | What's in it | Where the data comes from | Who keeps it up to date |
 |---|---|---|---|
 | resources | Public agency phone numbers and website information | Official government agency websites | Team (manual updates) |
-| sample_notices | Fictional Medicaid renewal and SNAP recertification notices for testing | Team-created fictional test documents | Team (manual updates) |
+| sample_notices (proposed) | Fictional Medicaid renewal and SNAP recertification notices for testing | Team-created fictional test documents | Team (manual updates) |
+
+The sample notices can initially be kept as test PDFs. A database table is not required unless the team decides to implement one.
 
 ### 8. Privacy and governance
 - **Personal info our app could touch:** Names, addresses, case numbers, health information and benefits details contained in uploaded letters.
 - **How we protect it:** Use fictional sample notices for development and testing. Do not save uploaded letters or personal information in our application database. Review API handling and logging before allowing real notices.
 - **What we tell users up front:** AI can make mistakes. Users should verify deadlines and required actions against the original notice and contact the agency when unsure. The app does not provide legal advice or determine benefits eligibility.
-- **Who on the team is responsible:** To be assigned by the team.
+- **Who on the team is responsible:** Pending team assignment.
 
 ### 9. Out of scope (not in these two weeks)
 - Eligibility screening (Benefits Finder)
 - Filling out or submitting government applications
 - User accounts or saving uploaded letters
-- Supporting additional benefit programs or multiple states
+- Supporting additional benefit programs or full multi-state coverage
 - Providing legal advice or connecting directly to government agency systems
 
 ### 10. Open questions
-- Which state will we use for the Medicaid and SNAP sample notices?
+- Which state will we use as the primary focus for the Medicaid and SNAP sample notices?
 - Who will be responsible for development, AI prompts, testing and research?
 - Which AI agent skills will we use or create?
 - How will we handle photo uploads and ensure sensitive information is not retained?
