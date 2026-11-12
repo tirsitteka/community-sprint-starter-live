@@ -6,7 +6,7 @@ import { addResource, listResources } from '../db/resources.js';
 import { runAgent, runLetterAgent } from '../agent/agent.js';
 import { loadSkills } from '../agent/skills.js';
 import { friendlyAiError } from '../ai/model.js';
-import { ChatRequest, LetterRequest, NewResource, ResourceQuery, firstError } from '../validation.js';
+import { ChatRequest, LetterRequest, LetterExplanationRequest, NewResource, ResourceQuery, firstError } from '../validation.js';
 
 // Restaurant analogy: the waiter's routes. Every path here starts with /api.
 export const api = Router();
@@ -39,20 +39,23 @@ api.post('/chat', async (req, res) => {
   }
 });
 
-// POST /api/letter/explain: explain notice text without tools or message logging.
-api.post('/letter/explain', async (req, res) => {
-  const parsed = LetterRequest.safeParse(req.body);
+// Both published request conventions use the same private letter workflow.
+async function explainLetter(req, res, schema, textField) {
+  const parsed = schema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: firstError(parsed) });
     return;
   }
   try {
-    res.json(await runLetterAgent(parsed.data.letterText));
+    res.json(await runLetterAgent(parsed.data[textField]));
   } catch (err) {
     // Do not log request text or provider errors, which could contain prompt content.
     res.status(502).json({ error: friendlyAiError(err) });
   }
-});
+}
+
+api.post('/letter/explain', (req, res) => explainLetter(req, res, LetterRequest, 'letterText'));
+api.post('/letters/explain', (req, res) => explainLetter(req, res, LetterExplanationRequest, 'message'));
 
 // GET /api/resources?search=food&category=Food
 api.get('/resources', async (req, res) => {

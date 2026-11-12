@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { CATEGORIES } from './db/seed-data.js';
+import { MAX_LETTER_LENGTH } from '../shared/letter.config.js';
 
 // Every request is checked with zod .safeParse() BEFORE we touch the AI or the database.
 // Restaurant analogy: the order ticket must be filled out correctly before the kitchen cooks.
@@ -14,7 +15,11 @@ export const ChatRequest = z.object({
 });
 
 export const LetterRequest = z.object({
-  letterText: z.string().trim().min(1, 'Paste the text from your letter first.').max(12000, 'Keep the letter under 12000 characters.'),
+  letterText: z.string().trim().min(1, 'Paste the text from your letter first.').max(MAX_LETTER_LENGTH, 'Keep the letter under 15000 characters.'),
+});
+
+export const LetterExplanationRequest = z.object({
+  message: z.string().trim().min(1, 'Paste your letter first.').max(MAX_LETTER_LENGTH, 'Letters must be 15,000 characters or fewer.'),
 });
 
 const optionalText = (max) => z.string().trim().max(max).optional().default('');

@@ -27,18 +27,22 @@ test('letter form API helper reaches the backend and preserves validation and sa
     await new Promise((resolve, reject) => server.close((err) => err ? reject(err) : resolve()));
   });
 
-  const result = await client.explainLetter(
-    'Your SNAP renewal is due by June 12. Please return the form. For agency questions call 800-555-0142.',
-  );
-  assert.equal(result.skill, 'plain-language-explainer');
-  assert.match(result.reply, /What This Letter Means/);
-  assert.match(result.reply, /June 12/);
-  assert.match(result.reply, /800-555-0142/);
-
-  await assert.rejects(client.explainLetter('   '), /Paste the text from your letter first/);
-  await assert.rejects(client.explainLetter('x'.repeat(12001)), /under 12000 characters/);
-
-  const crisis = await client.explainLetter('I want to hurt myself.');
-  assert.equal(crisis.skill, 'safety-guardrail');
-  assert.match(crisis.reply, /988/);
+  for (const explain of [client.explainLetter, client.explainLetterLegacy]) {
+    const result = await explain(
+      'Your SNAP renewal is due by June 12. Please return the form. For agency questions call 800-555-0142 or email help@example.gov.',
+    );
+    assert.equal(result.skill, 'plain-language-explainer');
+    assert.equal(result.routedBy, 'letter-explainer');
+    assert.match(result.reply, /What This Letter Means/);
+    assert.match(result.reply, /June 12/);
+    assert.match(result.reply, /800-555-0142/);
+    assert.match(result.reply, /help@example.gov/);
+    await assert.rejects(explain('   '), /Paste .*letter first/);
+    await assert.rejects(explain('x'.repeat(15001)), /15000|15,000/);
+    const longNotice = await explain('x'.repeat(15000));
+    assert.equal(longNotice.skill, 'plain-language-explainer');
+    const crisis = await explain('I want to hurt myself.');
+    assert.equal(crisis.skill, 'safety-guardrail');
+    assert.match(crisis.reply, /988/);
+  }
 });
