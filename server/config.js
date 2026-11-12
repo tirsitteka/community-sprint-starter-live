@@ -3,7 +3,7 @@ import 'dotenv/config';
 // Every setting the server reads, in one place.
 // On Replit these come from Secrets. Locally they come from .env.
 export const config = {
-  port: Number(process.env.PORT) || 3000,
+  port: Number(process.env.PORT) || 5000,
   isProduction: process.env.NODE_ENV === 'production',
 
   // ---- AI (Google Gemini through LangChain) ----
