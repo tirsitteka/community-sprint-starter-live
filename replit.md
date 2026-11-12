@@ -10,15 +10,21 @@ Express serves both the API and frontend on one port.
 - Run tests with `npm test`; check the production build with `npm run build`.
 - Production uses `npm start` after building.
 
-## Current service mode
+## Letter explanation and privacy
 
-The app connected successfully to the development PostgreSQL database and
-initialized 30 sample resources. The assistant currently uses the starter's mock
-responses because live Gemini access is not configured.
+- The paste form sends notice text to `POST /api/letters/explain`; the server uses
+  the existing Gemini integration and `plain-language-explainer` skill.
+- Letter requests have no chat history, resource lookup, database logging, or
+  application error logging. Do not add storage or request-body logging to this flow.
+- The safety guardrail still runs. Personal phone numbers, email addresses, SSNs,
+  and card numbers are removed. In letter mode only, phone/email details explicitly
+  labeled as agency contacts in the same sentence may be retained for the explanation.
+- Gemini credentials stay in Replit Secrets. The browser never receives the API key.
+- Letter text is limited to 15,000 characters.
 
-Live AI has not been verified. To enable it later, configure Gemini credentials
-through Replit's integration and Secrets tools. Never put credentials in source files.
-If run without a database connection, the app uses in-memory sample resources;
-additions in that mode are lost on restart.
+Live Gemini and the development PostgreSQL connection were verified with a
+fictional notice. Without `GEMINI_API_KEY`, the assistant falls back to mock mode.
+If run without a database connection, the existing resource features use
+in-memory sample data; additions in that mode are lost on restart.
 
 Project identity and team details remain as imported in `shared/project.config.js`.

@@ -50,15 +50,22 @@ export function buildSystemPrompt({ skill, toolResult, projectInstructions }) {
     .trim();
 }
 
-export async function runAgent({ message, skill: chosen, history = [] }) {
+export async function runAgent({
+  message,
+  skill: chosen,
+  history = [],
+  preserveAgencyContacts = false,
+  skipTools = false,
+  skipLogging = false,
+}) {
   const skills = await loadSkills();
   const mode = aiMode();
 
   // 1. GUARD
-  const guard = skills.get('safety-guardrail').tool.run({ message });
+  const guard = skills.get('safety-guardrail').tool.run({ message, preserveAgencyContacts });
   if (guard.flags.includes('crisis')) {
     const { CRISIS_REPLY } = skills.get('safety-guardrail').tool;
-    await safeLog({ skill: 'safety-guardrail', routedBy: 'guardrail', flags: guard.flags });
+    if (!skipLogging) await safeLog({ skill: 'safety-guardrail', routedBy: 'guardrail', flags: guard.flags });
     return { reply: CRISIS_REPLY, skill: 'safety-guardrail', routedBy: 'guardrail', flags: guard.flags, mode, sources: [] };
   }
   const cleanMessage = guard.redacted;
@@ -80,7 +87,7 @@ export async function runAgent({ message, skill: chosen, history = [] }) {
 
   // 3. TOOL
   let toolResult = null;
-  if (skill.tool?.run) toolResult = await skill.tool.run({ message: cleanMessage });
+  if (!skipTools && skill.tool?.run) toolResult = await skill.tool.run({ message: cleanMessage });
 
   // 4. THINK
   let reply;
@@ -106,7 +113,7 @@ export async function runAgent({ message, skill: chosen, history = [] }) {
   if (guard.flags.includes('legal')) reply += '\n\nNote: this is general information, not legal advice. A legal aid office can help for free.';
   if (guard.flags.includes('pii-removed')) reply += '\n\n(I removed personal information from your message to keep you safe.)';
 
-  await safeLog({ skill: skill.name, routedBy: route.routedBy, flags: guard.flags });
+  if (!skipLogging) await safeLog({ skill: skill.name, routedBy: route.routedBy, flags: guard.flags });
   return {
     reply,
     skill: skill.name,

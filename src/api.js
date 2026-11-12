@@ -14,6 +14,7 @@ export const api = {
   health: () => request('/health'),
   skills: () => request('/skills'),
   chat: (body) => request('/chat', { method: 'POST', body }),
+  explainLetter: (message) => request('/letters/explain', { method: 'POST', body: { message } }),
   resources: ({ search = '', category = '' } = {}) =>
     request(`/resources?${new URLSearchParams({ search, category })}`),
   addResource: (body) => request('/resources', { method: 'POST', body }),

@@ -13,6 +13,10 @@ export const ChatRequest = z.object({
     .optional(),
 });
 
+export const LetterExplanationRequest = z.object({
+  message: z.string().trim().min(1, 'Paste your letter first.').max(15000, 'Letters must be 15,000 characters or fewer.'),
+});
+
 const optionalText = (max) => z.string().trim().max(max).optional().default('');
 
 export const NewResource = z.object({

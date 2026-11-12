@@ -6,7 +6,7 @@ import { addResource, listResources } from '../db/resources.js';
 import { runAgent } from '../agent/agent.js';
 import { loadSkills } from '../agent/skills.js';
 import { friendlyAiError } from '../ai/model.js';
-import { ChatRequest, NewResource, ResourceQuery, firstError } from '../validation.js';
+import { ChatRequest, LetterExplanationRequest, NewResource, ResourceQuery, firstError } from '../validation.js';
 
 // Restaurant analogy: the waiter's routes. Every path here starts with /api.
 export const api = Router();
@@ -35,6 +35,28 @@ api.post('/chat', async (req, res) => {
     res.json(await runAgent(parsed.data));
   } catch (err) {
     console.error('[chat]', err);
+    res.status(502).json({ error: friendlyAiError(err) });
+  }
+});
+
+// POST /api/letters/explain: explain a notice without history, resource tools, or content logging.
+api.post('/letters/explain', async (req, res) => {
+  const parsed = LetterExplanationRequest.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: firstError(parsed) });
+    return;
+  }
+  try {
+    const result = await runAgent({
+      message: parsed.data.message,
+      skill: 'plain-language-explainer',
+      preserveAgencyContacts: true,
+      skipTools: true,
+      skipLogging: true,
+    });
+    res.json(result);
+  } catch (err) {
+    // Provider errors can contain submitted text; do not log them on this route.
     res.status(502).json({ error: friendlyAiError(err) });
   }
 });

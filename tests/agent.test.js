@@ -28,6 +28,17 @@ test('a chosen skill wins over the router', async () => {
   assert.equal(out.routedBy, 'visitor');
 });
 
+test('letter explanations can bypass resource tools and chat logging', async () => {
+  const out = await runAgent({
+    message: 'Where can I find food? This sentence is from a fictional notice.',
+    skill: 'plain-language-explainer',
+    skipTools: true,
+    skipLogging: true,
+  });
+  assert.equal(out.skill, 'plain-language-explainer');
+  assert.deepEqual(out.sources, []);
+});
+
 test('Gemini system prompt includes project, safety, skill, and tool instructions', async () => {
   const skills = await loadSkills();
   const projectInstructions = await loadProjectInstructions();
