@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 // Runs the whole agent loop with no API key and no database (mock mode + sample data).
 process.env.AI_MODE = 'mock';
 delete process.env.DATABASE_URL;
-const { runAgent, buildSystemPrompt, loadProjectInstructions } = await import('../server/agent/agent.js');
+const { runAgent, buildSystemPrompt, loadProjectInstructions, applyRoutineGuardNotes } = await import('../server/agent/agent.js');
 const { routeWithRules } = await import('../server/agent/router.js');
 const { loadSkills } = await import('../server/agent/skills.js');
 
@@ -54,6 +54,19 @@ test('Gemini system prompt includes project, safety, skill, and tool instruction
   assert.match(prompt, /# Skill: plain-language-explainer/);
   assert.match(prompt, /Use only these verified resource records\./);
   assert.match(prompt, /Never invent places, phone numbers, or facts\./);
+  assert.match(prompt, /Do not add a follow-up question or extra closing text/);
+  assert.doesNotMatch(prompt, /Want me to explain any part in more detail\?/);
+});
+
+test('letter explanations omit routine guard notes while normal agent replies retain them', () => {
+  const flags = ['medical', 'legal', 'pii-removed'];
+  const reply = 'The agency needs your form by June 1.';
+
+  assert.equal(applyRoutineGuardNotes(reply, flags, { suppressRoutineNotes: true }), reply);
+  const regularReply = applyRoutineGuardNotes(reply, flags);
+  assert.match(regularReply, /not medical advice/);
+  assert.match(regularReply, /not legal advice/);
+  assert.match(regularReply, /removed personal information/);
 });
 
 test('crisis messages skip the AI and show emergency numbers', async () => {

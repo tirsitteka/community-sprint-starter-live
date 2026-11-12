@@ -57,6 +57,7 @@ export async function runAgent({
   preserveAgencyContacts = false,
   skipTools = false,
   skipLogging = false,
+  suppressRoutineNotes = false,
 }) {
   const skills = await loadSkills();
   const mode = aiMode();
@@ -109,9 +110,7 @@ export async function runAgent({
   }
 
   // 5. CHECK
-  if (guard.flags.includes('medical')) reply += '\n\nNote: this is general information, not medical advice. Please check with a doctor or nurse.';
-  if (guard.flags.includes('legal')) reply += '\n\nNote: this is general information, not legal advice. A legal aid office can help for free.';
-  if (guard.flags.includes('pii-removed')) reply += '\n\n(I removed personal information from your message to keep you safe.)';
+  reply = applyRoutineGuardNotes(reply, guard.flags, { suppressRoutineNotes });
 
   if (!skipLogging) await safeLog({ skill: skill.name, routedBy: route.routedBy, flags: guard.flags });
   return {
@@ -123,6 +122,14 @@ export async function runAgent({
     mode,
     sources: toolResult?.data?.map((r) => ({ id: r.id, name: r.name })) ?? [],
   };
+}
+
+export function applyRoutineGuardNotes(reply, flags, { suppressRoutineNotes = false } = {}) {
+  if (suppressRoutineNotes) return reply;
+  if (flags.includes('medical')) reply += '\n\nNote: this is general information, not medical advice. Please check with a doctor or nurse.';
+  if (flags.includes('legal')) reply += '\n\nNote: this is general information, not legal advice. A legal aid office can help for free.';
+  if (flags.includes('pii-removed')) reply += '\n\n(I removed personal information from your message to keep you safe.)';
+  return reply;
 }
 
 function textOf(response) {

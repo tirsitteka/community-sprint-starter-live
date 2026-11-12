@@ -53,6 +53,7 @@ api.post('/letters/explain', async (req, res) => {
       preserveAgencyContacts: true,
       skipTools: true,
       skipLogging: true,
+      suppressRoutineNotes: true,
     });
     res.json(result);
   } catch (err) {
