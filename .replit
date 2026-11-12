@@ -1,6 +1,6 @@
 # Replit reads this file. "Run" starts the dev server (React + API on one port).
 run = "npm install && npm run dev"
-modules = ["nodejs-20", "postgresql-16"]
+modules = ["nodejs-20", "web"]
 
 [[ports]]
 localPort = 3000
@@ -10,3 +10,6 @@ externalPort = 80
 deploymentTarget = "autoscale"
 build = ["sh", "-c", "npm install && npm run build"]
 run = ["sh", "-c", "npm start"]
+
+[nix]
+channel = "stable-25_05"
