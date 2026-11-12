@@ -1,0 +1,16 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "5ydFx6w18TQPRWQp94685"
+uri = "file://TOOL_DEFINITIONS.md"
+type = "text"
+title = "Benefits Letter Decoder tool definitions"
+description = "Plain-English documentation of the two existing tools, their inputs and outputs, all six skills, and the current letter explanation flow."
+logical_id = "9cbc5d07-da71-45e6-89ce-2d7721442f84"
+content_hash = "sha256:be4d53d4f12e6ecda15075005266ca204bfc44cc60c0358960294abb68360d07"
+size = 9256
+mtime_ms = 1794448591996
+storage_uri = "gcs://replit-rams-assets-spock/rams/assets/repl:721595b6-ec72-4bcd-81ca-48e55d017927/9cbc5d07-da71-45e6-89ce-2d7721442f84/339a4581-21a6-4016-9e36-8a5779958eb8"
+storage_version_token = "1794448619760721"
+content_type = "text/markdown"
