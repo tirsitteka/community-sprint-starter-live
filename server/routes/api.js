@@ -3,10 +3,10 @@ import { aiMode, config } from '../config.js';
 import { hasDatabase } from '../db/pool.js';
 import { CATEGORIES } from '../db/seed-data.js';
 import { addResource, listResources } from '../db/resources.js';
-import { runAgent } from '../agent/agent.js';
+import { runAgent, runLetterAgent } from '../agent/agent.js';
 import { loadSkills } from '../agent/skills.js';
 import { friendlyAiError } from '../ai/model.js';
-import { ChatRequest, NewResource, ResourceQuery, firstError } from '../validation.js';
+import { ChatRequest, LetterRequest, NewResource, ResourceQuery, firstError } from '../validation.js';
 
 // Restaurant analogy: the waiter's routes. Every path here starts with /api.
 export const api = Router();
@@ -35,6 +35,21 @@ api.post('/chat', async (req, res) => {
     res.json(await runAgent(parsed.data));
   } catch (err) {
     console.error('[chat]', err);
+    res.status(502).json({ error: friendlyAiError(err) });
+  }
+});
+
+// POST /api/letter/explain: explain notice text without tools or message logging.
+api.post('/letter/explain', async (req, res) => {
+  const parsed = LetterRequest.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: firstError(parsed) });
+    return;
+  }
+  try {
+    res.json(await runLetterAgent(parsed.data.letterText));
+  } catch (err) {
+    // Do not log request text or provider errors, which could contain prompt content.
     res.status(502).json({ error: friendlyAiError(err) });
   }
 });

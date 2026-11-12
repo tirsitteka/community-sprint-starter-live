@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 // Runs the whole agent loop with no API key and no database (mock mode + sample data).
 process.env.AI_MODE = 'mock';
 delete process.env.DATABASE_URL;
-const { runAgent, loadSystemInstructions, buildAnswerSystemPrompt } = await import('../server/agent/agent.js');
+const { runAgent, runLetterAgent, loadSystemInstructions, buildAnswerSystemPrompt } = await import('../server/agent/agent.js');
 const { routeWithAi, routeWithRules } = await import('../server/agent/router.js');
 const { loadSkills } = await import('../server/agent/skills.js');
 
@@ -77,6 +77,35 @@ test('crisis messages skip the AI and show emergency numbers', async () => {
   const out = await runAgent({ message: 'I want to end my life' });
   assert.equal(out.skill, 'safety-guardrail');
   assert.match(out.reply, /988/);
+});
+
+test('letter explanations use the plain-language skill and identify missing details', async () => {
+  const out = await runLetterAgent('Your SNAP renewal is due by June 12. Please return the form.');
+  assert.equal(out.skill, 'plain-language-explainer');
+  assert.equal(out.routedBy, 'letter-explainer');
+  assert.match(out.reply, /What This Letter Means/);
+  assert.match(out.reply, /June 12/);
+  assert.match(out.reply, /Who to Contact/);
+  assert.match(out.reply, /couldn't find contact information/i);
+  assert.doesNotMatch(out.reply, /eligib(?:le|ility)/i);
+});
+
+test('letter explanations preserve agency contact numbers and redact personal numbers', async () => {
+  const out = await runLetterAgent(
+    'Your SNAP benefits will end on July 1 unless we receive your renewal packet.\nReturn the form by June 20.\nFor agency questions call 800-555-0142. My personal number is 312-555-0199.',
+  );
+  assert.match(out.reply, /800-555-0142/);
+  assert.doesNotMatch(out.reply, /312-555-0199/);
+  assert.match(out.reply, /June 20/);
+  assert.match(out.reply, /What You Need to Do/);
+  assert.equal(out.skill, 'plain-language-explainer');
+});
+
+test('letter requests keep crisis protection and do not include notice text in agent metadata', async () => {
+  const crisis = await runLetterAgent('This notice says I want to hurt myself.');
+  assert.equal(crisis.skill, 'safety-guardrail');
+  assert.match(crisis.reply, /988/);
+  assert.equal(Object.hasOwn(crisis, 'message'), false);
 });
 
 test('ticket 001: a question with no match finds nothing in the database', async () => {

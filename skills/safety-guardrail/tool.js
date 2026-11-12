@@ -13,10 +13,14 @@ const TOPIC_RULES = [
   { flag: 'legal', pattern: /\b(evict\w*|lawyer|lawsuit|court|custody|immigration|legal|sue|arrest\w*)\b/i },
 ];
 
-export function run({ message }) {
+export function run({ message, allowOfficialPhones = false }) {
   let redacted = message;
   const removed = [];
   for (const rule of PII_RULES) {
+    if (allowOfficialPhones && rule.label === 'phone') {
+      redacted = redactNonOfficialPhones(redacted, rule.pattern, removed);
+      continue;
+    }
     redacted = redacted.replace(rule.pattern, () => {
       removed.push(rule.label);
       return `[${rule.label} removed]`;
@@ -25,6 +29,23 @@ export function run({ message }) {
   const flags = TOPIC_RULES.filter((rule) => rule.pattern.test(message)).map((rule) => rule.flag);
   if (removed.length) flags.push('pii-removed');
   return { redacted, flags, removed };
+}
+
+function redactNonOfficialPhones(message, pattern, removed) {
+  return message.split(/(\r?\n)/).map((part) => {
+    if (/^\r?\n$/.test(part)) return part;
+    // Classify each number from the text immediately before it, so a personal
+    // number later on a line cannot inherit an earlier agency-contact label.
+    return part.replace(pattern, (number, offset) => {
+      const preceding = part.slice(Math.max(0, offset - 100), offset);
+      const hasAgencyLabel = /\b(?:agency|office|customer service|benefits? (?:line|office)|toll[- ]free|questions?|phone)\b/i.test(preceding)
+        || /\b(?:questions|call|contact)\b.{0,35}\b(?:us|our|agency|office|phone|number|customer service|benefits? line)\b/i.test(preceding);
+      const looksPersonal = /\b(?:my|personal|home|cell|mobile|call me|reach me)\b/i.test(preceding);
+      if (hasAgencyLabel && !looksPersonal) return number;
+      removed.push('phone');
+      return '[phone removed]';
+    });
+  }).join('');
 }
 
 export const CRISIS_REPLY =

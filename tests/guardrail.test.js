@@ -21,3 +21,13 @@ test('leaves normal questions alone', () => {
   assert.equal(out.redacted, 'Where can my kids get homework help?');
   assert.deepEqual(out.flags, []);
 });
+
+test('keeps clearly labeled agency phone numbers but removes personal numbers', () => {
+  const out = run({
+    message: 'For agency questions, call 800-555-0142. My personal number is 312-555-0199.',
+    allowOfficialPhones: true,
+  });
+  assert.match(out.redacted, /800-555-0142/);
+  assert.doesNotMatch(out.redacted, /312-555-0199/);
+  assert.ok(out.flags.includes('pii-removed'));
+});

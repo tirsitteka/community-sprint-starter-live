@@ -1,11 +1,17 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { ChatRequest, NewResource, firstError } from '../server/validation.js';
+import { ChatRequest, LetterRequest, NewResource, firstError } from '../server/validation.js';
 
 test('chat requests need a message', () => {
   assert.equal(ChatRequest.safeParse({ message: '   ' }).success, false);
   assert.equal(ChatRequest.safeParse({ message: 'hi', skill: 'auto' }).success, true);
   assert.equal(ChatRequest.safeParse({ message: 'hi', skill: '../../etc' }).success, false);
+});
+
+test('letter explanation requests require text within the size limit', () => {
+  assert.equal(LetterRequest.safeParse({ letterText: '  ' }).success, false);
+  assert.equal(LetterRequest.safeParse({ letterText: 'Your renewal is due by June 12.' }).success, true);
+  assert.equal(LetterRequest.safeParse({ letterText: 'x'.repeat(12001) }).success, false);
 });
 
 test('new resources are checked with friendly messages', () => {
