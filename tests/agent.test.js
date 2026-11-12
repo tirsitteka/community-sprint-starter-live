@@ -4,8 +4,8 @@ import assert from 'node:assert/strict';
 // Runs the whole agent loop with no API key and no database (mock mode + sample data).
 process.env.AI_MODE = 'mock';
 delete process.env.DATABASE_URL;
-const { runAgent } = await import('../server/agent/agent.js');
-const { routeWithRules } = await import('../server/agent/router.js');
+const { runAgent, loadSystemInstructions, buildAnswerSystemPrompt } = await import('../server/agent/agent.js');
+const { routeWithAi, routeWithRules } = await import('../server/agent/router.js');
 const { loadSkills } = await import('../server/agent/skills.js');
 
 test('keyword routing picks a sensible skill', async () => {
@@ -14,6 +14,51 @@ test('keyword routing picks a sensible skill', async () => {
   assert.equal(routeWithRules('What does this letter mean?', skills).skill, 'plain-language-explainer');
   assert.equal(routeWithRules('What should I do next?', skills).skill, 'action-plan-builder');
   assert.equal(routeWithRules('Where is a food pantry?', skills).skill, 'resource-finder');
+});
+
+test('loads system.md and combines it with existing base and skill instructions', async () => {
+  const instructions = await loadSystemInstructions();
+  assert.match(instructions, /Required Response Format/);
+  assert.match(instructions, /Never invent deadlines/);
+
+  const prompt = buildAnswerSystemPrompt({
+    instructions,
+    skill: { name: 'plain-language-explainer', body: 'Explain unfamiliar terms simply.' },
+    toolContext: 'Relevant resource context.',
+  });
+  assert.match(prompt, /You are .*AI assistant/);
+  assert.match(prompt, /Additional instructions from system\.md/);
+  assert.match(prompt, /Never invent deadlines/);
+  assert.match(prompt, /Skill: plain-language-explainer/);
+  assert.match(prompt, /Explain unfamiliar terms simply\./);
+  assert.match(prompt, /Relevant resource context\./);
+});
+
+test('passes system.md instructions to Gemini skill routing', async () => {
+  const skills = await loadSkills();
+  const instructions = await loadSystemInstructions();
+  let capturedSystemMessage = '';
+  const model = {
+    withStructuredOutput() {
+      return {
+        async invoke(messages) {
+          capturedSystemMessage = messages[0].content;
+          return { skill: 'resource-finder', reason: 'Find local help.' };
+        },
+      };
+    },
+  };
+
+  const route = await routeWithAi({
+    message: 'Where can I find help?',
+    skills,
+    model,
+    systemInstructions: instructions,
+  });
+  assert.equal(route.skill, 'resource-finder');
+  assert.match(capturedSystemMessage, /Benefits Letter Decoder/);
+  assert.match(capturedSystemMessage, /Never invent deadlines/);
+  assert.match(capturedSystemMessage, /Choose only the skill/);
 });
 
 test('resource-finder searches the database before answering', async () => {

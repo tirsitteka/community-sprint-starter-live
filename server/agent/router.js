@@ -11,14 +11,19 @@ export function makeRouteSchema(skillNames) {
   });
 }
 
-export async function routeWithAi({ message, skills, model }) {
+export async function routeWithAi({ message, skills, model, systemInstructions = '' }) {
   const choices = publicSkills(skills);
   const schema = makeRouteSchema(choices.map((s) => s.name));
   const routerSkill = skills.get('intent-router');
   const menu = choices.map((s) => `- ${s.name}: ${s.description}`).join('\n');
 
   const result = await model.withStructuredOutput(schema).invoke([
-    new SystemMessage(`${routerSkill.body}\n\n## Skills you can choose\n${menu}`),
+    new SystemMessage([
+      systemInstructions ? `# Agent instructions from system.md\n${systemInstructions}` : '',
+      routerSkill.body,
+      `## Skills you can choose\n${menu}`,
+      'Choose only the skill that best fits the visitor’s request. Do not answer the request here.',
+    ].filter(Boolean).join('\n\n')),
     new HumanMessage(message),
   ]);
   return schema.parse(result); // double-check the shape before we trust it

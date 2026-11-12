@@ -1,3 +1,4 @@
+import { readFile } from 'node:fs/promises';
 import { SystemMessage, HumanMessage, AIMessage } from '@langchain/core/messages';
 import { aiMode } from '../config.js';
 import { project } from '../../shared/project.config.js';
@@ -31,6 +32,23 @@ export function baseSystemPrompt() {
   ].join('\n');
 }
 
+export async function loadSystemInstructions() {
+  const instructions = (await readFile(new URL('../../system.md', import.meta.url), 'utf8')).trim();
+  if (!instructions) throw new Error('system.md is empty; add the agent instructions before using Gemini.');
+  return instructions;
+}
+
+export function buildAnswerSystemPrompt({ instructions, skill, toolContext = '' }) {
+  return [
+    baseSystemPrompt(),
+    '# Additional instructions from system.md',
+    'Follow these instructions when they apply to the visitor’s request. Keep the selected skill and the safety rules above in effect.',
+    instructions,
+    `# Skill: ${skill.name}\n${skill.body}`,
+    toolContext,
+  ].filter(Boolean).join('\n\n').trim();
+}
+
 export async function runAgent({ message, skill: chosen, history = [] }) {
   const skills = await loadSkills();
   const mode = aiMode();
@@ -44,13 +62,17 @@ export async function runAgent({ message, skill: chosen, history = [] }) {
   }
   const cleanMessage = guard.redacted;
 
+  // Read the project-level instructions only when Gemini will be used.
+  // This keeps crisis handling and mock mode independent of the AI provider.
+  const systemInstructions = mode === 'live' ? await loadSystemInstructions() : '';
+
   // 2. ROUTE
   let route;
   if (chosen && chosen !== 'auto' && skills.has(chosen)) {
     route = { skill: chosen, reason: 'Chosen by the visitor.', routedBy: 'visitor' };
   } else if (mode === 'live') {
     try {
-      route = { ...(await routeWithAi({ message: cleanMessage, skills, model: await getModel() })), routedBy: 'intent-router' };
+      route = { ...(await routeWithAi({ message: cleanMessage, skills, model: await getModel(), systemInstructions })), routedBy: 'intent-router' };
     } catch {
       route = { ...routeWithRules(cleanMessage, skills), routedBy: 'keyword-rules' };
     }
@@ -68,9 +90,11 @@ export async function runAgent({ message, skill: chosen, history = [] }) {
   if (mode === 'mock') {
     reply = mockReply(skill.name, toolResult);
   } else {
-    const system = [baseSystemPrompt(), `\n# Skill: ${skill.name}\n${skill.body}`, toolResult ? `\n${toolResult.context}` : '']
-      .join('\n')
-      .trim();
+    const system = buildAnswerSystemPrompt({
+      instructions: systemInstructions,
+      skill,
+      toolContext: toolResult?.context ?? '',
+    });
     const model = await getModel();
     const response = await model.invoke([
       new SystemMessage(system),
