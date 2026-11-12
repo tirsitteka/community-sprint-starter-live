@@ -1,3 +1,4 @@
+import { readFile } from 'node:fs/promises';
 import { SystemMessage, HumanMessage, AIMessage } from '@langchain/core/messages';
 import { aiMode } from '../config.js';
 import { project } from '../../shared/project.config.js';
@@ -29,6 +30,24 @@ export function baseSystemPrompt() {
     '- If you do not know, say so. Never invent places, phone numbers, or facts.',
     '- Keep answers under 150 words unless the visitor asks for more.',
   ].join('\n');
+}
+
+export async function loadProjectInstructions() {
+  return readFile(new URL('../../system.md', import.meta.url), 'utf8');
+}
+
+export function buildSystemPrompt({ skill, toolResult, projectInstructions }) {
+  return [
+    baseSystemPrompt(),
+    '# Project instructions (system.md)',
+    'Follow these project instructions for every response. Also follow the selected skill instructions unless they conflict with the safety rules or these project instructions.',
+    projectInstructions.trim(),
+    `# Skill: ${skill.name}\n${skill.body}`,
+    toolResult ? toolResult.context : '',
+  ]
+    .filter(Boolean)
+    .join('\n\n')
+    .trim();
 }
 
 export async function runAgent({ message, skill: chosen, history = [] }) {
@@ -68,9 +87,11 @@ export async function runAgent({ message, skill: chosen, history = [] }) {
   if (mode === 'mock') {
     reply = mockReply(skill.name, toolResult);
   } else {
-    const system = [baseSystemPrompt(), `\n# Skill: ${skill.name}\n${skill.body}`, toolResult ? `\n${toolResult.context}` : '']
-      .join('\n')
-      .trim();
+    const system = buildSystemPrompt({
+      skill,
+      toolResult,
+      projectInstructions: await loadProjectInstructions(),
+    });
     const model = await getModel();
     const response = await model.invoke([
       new SystemMessage(system),
