@@ -35,7 +35,9 @@ export default function LetterExplanation() {
         <div className="letter-form-heading">
           <div>
             <p className="letter-step">Your notice</p>
-            <h2 id="paste-title">Paste Your Letter</h2>
+            <label className="letter-input-label" id="paste-title" htmlFor="letter-input">
+              Paste Your Letter
+            </label>
           </div>
           <span className="letter-count" aria-live="polite">
             {draft.length.toLocaleString()} / {MAX_LETTER_LENGTH.toLocaleString()}
