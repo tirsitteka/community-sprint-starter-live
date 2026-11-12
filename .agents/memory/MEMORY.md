@@ -1,0 +1,1 @@
+- [Backend freshness after merges](backend-freshness.md) — a failed merge setup can leave the backend stale while the frontend updates; verify the new endpoint, not only health.
