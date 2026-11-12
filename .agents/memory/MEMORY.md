@@ -1,1 +1,2 @@
 - [Backend freshness after merges](backend-freshness.md) — a failed merge setup can leave the backend stale while the frontend updates; verify the new endpoint, not only health.
+- [Template notice safeguards](template-notice-safeguards.md) — Gemini may echo unfilled fields as bold values; keep deterministic missing-information labels after generation.
