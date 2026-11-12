@@ -7,6 +7,7 @@ import { getModel } from '../ai/model.js';
 import { loadSkills } from './skills.js';
 import { routeWithAi, routeWithRules } from './router.js';
 import { analyzeNoticeCompleteness, markUnfilledFields, noticeCompletenessGuidance } from './letter-completeness.js';
+import { finalizeLetterExplanation, OFFICIAL_NOTICE_REMINDER } from './letter-response.js';
 
 // =============================================================
 // THE AGENT LOOP: five steps for every message
@@ -135,6 +136,11 @@ export function buildLetterSystemPrompt({ instructions, skill, letterText }) {
     'Return the required four headings: What This Letter Means, Important Deadline, What You Need to Do, Who to Contact.',
     'Keep all facts grounded in the notice. Explicitly say when a deadline, action, or contact detail is missing or unclear.',
     'Do not decide eligibility or give legal advice. Do not use tools or add outside resource information.',
+    '# Letter response ending',
+    'Keep the four required sections and finish with the official-document reminder exactly once. Do not add an automatic follow-up question or routine personal-information removal announcements.',
+    'Do not add generic medical or legal disclaimers merely because a benefits notice mentions a doctor, prescription coverage, legal aid, or appeal rights.',
+    'Keep necessary, context-specific safety warnings when the content actually involves treatment decisions or requests for medical or legal advice. Keep these brief and within the relevant section; never provide unsafe advice.',
+    `Use this final reminder: ${OFFICIAL_NOTICE_REMINDER}`,
     noticeCompletenessGuidance(letterText),
   ].join('\n\n');
 }
@@ -168,10 +174,9 @@ export async function runLetterAgent(letterText) {
 
   // Do not rely on model formatting to keep template fields from looking like
   // confirmed dates or phone numbers.
-  let safeReply = markUnfilledFields(reply);
-  if (guard.flags.includes('medical')) safeReply += '\n\nNote: this is general information, not medical advice. Please check with a doctor or nurse.';
-  if (guard.flags.includes('legal')) safeReply += '\n\nNote: this is general information, not legal advice. A legal aid office can help for free.';
-  if (guard.flags.includes('pii-removed')) safeReply += '\n\n(I removed personal information from the notice to keep you safe.)';
+  // Guard flags still protect and redact the request. A keyword flag alone
+  // does not mean an ordinary benefits notice needs a blanket advice disclaimer.
+  const safeReply = finalizeLetterExplanation(markUnfilledFields(reply));
 
   return {
     reply: safeReply,
@@ -220,7 +225,7 @@ function mockLetterReply(letterText) {
     contact || "I couldn't find contact information in this letter.",
     completeness.missingContact ? 'The template contact information is not filled in.' : '',
     '',
-    'This explanation is for understanding your letter. The original notice is the official document. If you are unsure, contact the agency listed in your letter.',
+    OFFICIAL_NOTICE_REMINDER,
   ].join('\n');
 }
 
